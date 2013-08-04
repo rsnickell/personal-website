@@ -1,0 +1,195 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+  <head>
+    <title>HTML5 Diagnostic</title>
+    <link href="css/bubbles.css" media="all" rel="stylesheet" type="text/css"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+<style>
+body {
+	background: black;
+}
+
+#report {
+    color: white;
+    font: bold 2em arial, sans-seriff;
+}
+</style>
+    <script langauage="javascript" type="text/javascript">
+    //Globals
+    var canvas = null;
+    var WIDTH = null;
+    var HEIGHT = null;
+    var FS = "<br>";
+    var actionObjs = [];
+    var MAX_TIME_TO_LIVE = 80; //2 seconds at 40fps
+
+    function randomColor() {
+        var colorArray = ['FFFF00','00CC00','0066FF','CC0000','6600FF'];
+        var color = colorArray[Math.floor(Math.random() * colorArray.length)];
+        return color;
+    }
+
+    function Action(I) {
+        I = I || {};
+        //I.color = 'FFFF00';
+        I.color = randomColor();
+        I.radius = 10;
+        I.timeAlive = 0;
+        I.active = true;
+        
+        I.draw = function() {
+            canvas.fillStyle = this.color;
+            canvas.strokeStyle = this.color;
+            var lowerLimit = (WIDTH > HEIGHT ? HEIGHT : WIDTH);
+            var lw = Math.ceil(lowerLimit / 45);
+            canvas.lineWidth = lw;
+            canvas.beginPath();
+            canvas.arc(I.x,I.y,I.radius,0,Math.PI*2,true);
+            canvas.closePath();
+            canvas.stroke();
+        };
+
+        I.update = function() {
+            I.timeAlive += 1;
+            I.radius += 1;
+            if(I.timeAlive > MAX_TIME_TO_LIVE){
+                I.active = false;
+            }
+        };
+
+        return I;
+    }
+
+    function logMsg(msg){
+        var reportDiv = document.getElementById('report');
+        var reportText = reportDiv.innerHTML;
+        var msgArray = reportText.split(FS);
+        var timeStamp = new Date();
+        msg = timeStamp.getTime() + ' ' + msg;
+        var MAX = msgArray.length > 5 ? 5 : msgArray.length;
+        reportText = msg + FS;
+        for(var i=0;i<MAX;i++) {
+            if(i>0){
+                reportText += msgArray[i-1] + FS;
+            }
+        }
+        reportDiv.innerHTML = reportText;
+    }
+
+    function resize(evt){
+        var newWidth = window.innerWidth;
+        var newHeight = window.innerHeight;
+        var canvasElement = document.getElementById('canvasId');
+        canvasElement.width = newWidth - 20;
+        canvasElement.height = newHeight - 20;
+        //Update the constants so other methods don't have to refetch the dom element
+        WIDTH = canvasElement.width;
+        HEIGHT = canvasElement.height;
+    }
+
+    function touchMoveHandler(evt) {
+        //var msg = 'Touch move: ';
+        for(var i = 0; i < evt.touches.length; i++) {
+            var touch = evt.touches[i];
+            //msg += touch.identifier + '(x,y) = ('+touch.clientX+','+touch.clientY+')';
+            if(i<evt.touches.length) {
+                msg += ', ';
+            }
+        }
+        //logMsg(msg);
+    }
+    function touchStartHandler(evt) {
+        //var msg = 'Touch start: ';
+        for(var i = 0; i < evt.changedTouches.length; i++) {
+            var touch = evt.changedTouches[i];
+            //msg += touch.identifier + '(x,y) = ('+touch.clientX+','+touch.clientY+')';
+            actionObjs.push(Action({
+                            x: touch.clientX,
+                            y: touch.clientY
+            }));
+
+        }
+        //logMsg(msg);
+    }
+
+    function clickHandler(evt){
+        //This gets fired after touchstart and gets processed as a click button 0
+        logMsg('Click: button = '+evt.button);
+    }
+
+    function update() {
+        actionObjs.forEach(function(actionObj) {
+            actionObj.update();
+        });
+        //Remove any inactive fireworks
+        actionObjs = actionObjs.filter(function(actionObj) {
+            return actionObj.active;
+        });
+    }
+
+    function draw() {
+        canvas.clearRect(0,0,WIDTH,HEIGHT);
+        actionObjs.forEach(function(actionObj) {
+            actionObj.draw();
+        });
+    }
+
+    //Create a common way to request the animation frame
+    window.requestAnimFrame = (function(){
+            return window.requestAnimationFrame ||
+                   window.webkitRequestAnimationFrame ||
+                   window.mozRequestAnimationFrame ||
+                   window.oRequestAnimationFrame ||
+                   window.msRequestAnimationFrame ||
+                   function( callback ) {
+                        window.setTimeout(callback, 1000/60);
+                   };
+    })();
+
+    function startEventLoop() {
+        /*
+        setInterval(function() {
+            update();
+            draw();
+            }, 40);
+        */
+        //Typical this is set to 60fps
+        requestAnimFrame(startEventLoop);
+        update();
+        draw();
+    }
+
+    function init(){
+        var canvasElement = document.getElementById('canvasId');
+        if(!canvasElement.getContext){
+            logMsg("Canvas: No support");
+            return;
+        } else {
+            canvas = canvasElement.getContext('2d');
+        }
+        canvasElement.addEventListener('touchstart', touchStartHandler, false);
+        canvasElement.addEventListener('touchmove', touchMoveHandler, false);
+
+        resize();
+
+        window.addEventListener('resize', resize, false);
+        window.addEventListener('orientationchange', resize, false);
+
+        //canvasElement.addEventListener('click', clickHandler, false);
+
+        //Prevent user dragging here to keep the canvas stationary
+        document.body.addEventListener('touchmove', function(event) {
+                event.preventDefault();
+                }, false);
+
+        startEventLoop();
+    }
+
+    </script>
+  </head>
+  <body onLoad="init()">
+  <canvas id='canvasId' width='600px' height='400px' style="border: 1px solid red"></canvas>
+  <div id="report">
+  </div>
+  </body>
+</html>
