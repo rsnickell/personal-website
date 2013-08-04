@@ -6,8 +6,8 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link href="p0z3r.css" type="text/css" rel="stylesheet"/>
-    <link href="p0z3r-responsive.css" type="text/css" rel="stylesheet"/>
+    <link href="css/p0z3r.css" type="text/css" rel="stylesheet"/>
+    <link href="css/p0z3r-responsive.css" type="text/css" rel="stylesheet"/>
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 
@@ -18,13 +18,6 @@
            //var output='<table><tbody>';
            var output = '';
            for (var i=0; i<rssentries.length; i++){
-               /*
-            if(i%4 == 0)
-            {
-                output+='<tr>';
-            }
-            output+='<td>';
-            */
             output += '<div class="flickr-photo">';
             output +='<a href="'+rssentries[i].link+'">';
             var media = rssentries[i].media.m;
@@ -33,15 +26,7 @@
             output += '<img src="'+thumbnail+'" alt="'+title+'" title="'+title+'"/>';
             output += '</a>';
             output += '</div>';
-            /*
-            output+='</td>';
-            if(i%4 == 3)
-            {
-                output+='</tr>';
-            }
-            */
            }
-           //output+='</tbody></table>';
            output += '<div style="clear:both"></div>';
            document.getElementById("result").innerHTML=output;
         }
