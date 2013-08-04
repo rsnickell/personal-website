@@ -1,0 +1,194 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>p0z3r</title>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="p0z3r.css" type="text/css" rel="stylesheet"/>
+    <link href="p0z3r-responsive.css" type="text/css" rel="stylesheet"/>
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
+    <script type="text/javascript">
+        //This is the method defined by the Flickr JSON response
+        function jsonFlickrFeed(jsondata) {
+           var rssentries=jsondata.items;
+           //var output='<table><tbody>';
+           var output = '';
+           for (var i=0; i<rssentries.length; i++){
+               /*
+            if(i%4 == 0)
+            {
+                output+='<tr>';
+            }
+            output+='<td>';
+            */
+            output += '<div class="flickr-photo">';
+            output +='<a href="'+rssentries[i].link+'">';
+            var media = rssentries[i].media.m;
+            var thumbnail = media.replace("_m.jpg","_t.jpg");
+            var title = rssentries[i].title;
+            output += '<img src="'+thumbnail+'" alt="'+title+'" title="'+title+'"/>';
+            output += '</a>';
+            output += '</div>';
+            /*
+            output+='</td>';
+            if(i%4 == 3)
+            {
+                output+='</tr>';
+            }
+            */
+           }
+           //output+='</tbody></table>';
+           output += '<div style="clear:both"></div>';
+           document.getElementById("result").innerHTML=output;
+        }
+    </script>
+    <script type="text/javascript">
+    //Google Analytics
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-35720469-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+
+    </script>
+</head>
+<!--[if IE]>
+<body class="ie">
+<![endif]-->
+<!--[if !IE]>-->
+<body>
+<!--<![endif]-->
+    <div class="container">
+        <div id="header">
+            <table>
+            <tbody>
+            <tr>
+            <td>
+                <div class="tab" data-tabtarget="general">
+                Info
+                </div>
+            </td>
+            <td>
+                <div class="tab" data-tabtarget="social">
+                Social
+                </div>
+            </td>
+            <td>
+                <div class="tab" data-tabtarget="pictures">
+                Pictures
+                </div>
+            </td>
+            <td>
+                <div class="tab" data-tabtarget="goog">
+                Google
+                </div>
+            </td>
+            <td>
+                <div class="tab" data-tabtarget="html5">
+                HTML5
+                </div>
+            </td>
+            </tr>
+            </tbody>
+            </table>
+        </div>
+        <div id="wrap">
+            <div class="normal" data-tabcontent="general">
+                <ul style="list-style-type: none;">
+                    <li>
+                        <a href="http://www.p0z3r.org">p0z3r.org</a> presents information pertaining to Ryan Nickell as well as some side projects he's worked on or is currently developing.
+                    </li>
+                </ul>
+            </div>
+            <div class="normal" data-tabcontent="social">
+                <div class="highlight">Networking</div>
+                <ul>
+                    <li>Friends and family can find me on <a href="http://facebook.com">Facebook</a> and/or <a href="http://www.instagram.com/rsnickell">Instagram</a></li>
+                    <li>Colleagues can locate me on <a href="http://www.linkedin.com/pub/ryan-nickell/4/328/986">LinkedIn</a></li>
+                    <li>I'm on the Twitter! <a href="http://www.twitter.com/rsnickell">@rsnickell</a></li>
+                    <li>You can <a href="https://github.com/rsnickell">Fork Me on Github</a></li>
+                </ul>
+                <div class="highlight">Pictures</div>
+                <ul>
+                    <li><a href="http://www.flickr.com/photos/ryannickell/">Flickr</a> holds vacation and other random pictures</li>
+                    <li><a href="https://picasaweb.google.com/rsnickell">Picasa</a> not publicly viewable but I can send you a link =c)</li>
+                </ul>
+                <div class="highlight">Video</div>
+                <ul>
+                    <li><a href="http://www.youtube.com/user/p0z3r">Youtube</a> is also utilized but mostly for relatives to view my kids' progress in life.</li>
+                </ul>
+                <div class="highlight">Archived</div>
+                <ul>
+                    <li>My archived blogger page exists <a href="http://p0z3r.org/blogger.html">here</a></li>
+                </ul>
+            </div>
+            <div class="normal" data-tabcontent="pictures">
+                <ul>The most recent Flickr pictures
+                    <!-- This is dynamically updated from flickr -->
+                    <div id="result"> </div>
+                </ul>
+            </div>
+            <div class="normal" data-tabcontent="goog">
+                <ul style="list-style-type: none;">
+                    <li>
+                    Some locations of interest to test the Google Maps API<br/>
+                    <iframe src='http://p0z3r.org/google/' id="googiframe" width="100%" height="425px" frameborder=0></iframe>
+                    </li>
+                </ul>
+            </div>
+            <div class="normal" data-tabcontent="html5">
+                <ul>
+                    <li>Try out some <a href="/games/fireworks/fireworks.html">fireworks</a> I threw together for my daughter</li>
+                    <li><a href="/games/bubbles/bubbles.html">Bubbles</a> - this is great for kids from 1-3 years old</li>
+                </ul>
+            </div>
+        </div>
+        <div class="push"></div>
+    </div>
+    <div class="footer highlight">
+        Copyright 2005-2013 Ryan Nickell, All rights reserved
+    </div>
+    <script type="text/javascript">
+    //Fixes a display bug with embedding the Google map in an iframe
+    function ReloadMap() {
+        var f = document.getElementById("googiframe");
+        if(f != null)
+        {
+            f.src = f.src;
+        }
+    }
+
+    $(function(){
+        $('.tab').click(function(e){
+            e.preventDefault();
+            var current = $('[data-tabcontent]:visible').data('tabcontent');
+            var clicked = $(this).data('tabtarget');
+            if( !current || current.indexOf( clicked ) == -1 ) {
+                $('[data-tabcontent]').hide();
+                $('[data-tabcontent=' + clicked + ']').show();
+                $('.tab').removeClass('highlight');
+                $(this).addClass('highlight');
+
+                if( clicked.indexOf( 'goog' ) != -1 ) {
+                    ReloadMap();
+                }
+            }
+        });
+
+        $('.tab:first').trigger('click');
+    });
+    </script>
+
+    <!-- flickr JSON feed -->
+    <script src="http://api.flickr.com/services/feeds/photos_public.gne?id=35716933@N00&lang=en-us&format=json"></script>
+</body>
+</html>
+
