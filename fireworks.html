@@ -1,0 +1,178 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+  <head>
+    <title>HTML5 Fireworks</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+<style>
+body {
+	background: black;
+}
+
+#report {
+    color: white;
+    font: bold 2em arial, sans-seriff;
+}
+</style>
+    <script langauage="javascript" type="text/javascript">
+    function logMsg(msg){
+        if(window.console){
+            var d = new Date();
+            console.log(d + ' ' + msg);
+        }
+    }
+
+    //Globals
+    var canvas = null;
+    var WIDTH = null;
+    var HEIGHT = null;
+    var fireworks = [];
+    var DEF_SIZE = 2;
+    var DEF_VEL = -5;
+    var MAX_RADIUS = 50;
+    var TEST = false;
+
+    function randomColor() {
+        var colorArray = ['FFFF00','00CC00','0066FF','CC0000','6600FF'];
+        var color = colorArray[Math.floor(Math.random() * colorArray.length)];
+        return color;
+    }
+    function Firework(I) {
+        I.active = true;
+        I.explodeDelay = Math.floor(Math.random() * 30);
+        I.explodeRadius = DEF_SIZE;
+        I.maxExplodeRadius = Math.floor(Math.random() * MAX_RADIUS + 15) + 15;
+        I.age = 0;
+        I.maxAge = Math.floor(Math.random() * 128);
+        I.state = 'flying';
+        I.color = 'FFFFFF';
+        I.width = DEF_SIZE;
+        I.height = DEF_SIZE;
+        I.xVelocity = 0;
+        I.yVelocity = -I.speed;
+
+        I.inBounds = function() {
+            return I.x >= 0 && I.x <= WIDTH && 
+                I.y >= 0 && I.y <= HEIGHT;
+        };
+
+        I.doneExploding = function() {
+            return I.explodeRadius >= I.maxExplodeRadius;
+        };
+
+        I.draw = function() {
+            canvas.fillStyle = this.color;
+            canvas.strokeStyle = this.color;
+            if(I.state === 'flying') {
+                canvas.fillRect(this.x, this.y, this.width, this.height);
+            } else {
+                canvas.beginPath();
+                canvas.arc(I.x,I.y,I.explodeRadius,0,Math.PI*2,true);
+                canvas.closePath();
+                canvas.stroke();
+            }
+        };
+
+        I.update = function() {
+            I.age++;
+            if(I.age >= I.maxAge && I.state === 'flying') {
+                //should explode here
+                //I.color = 'FFFF00';
+                I.color = randomColor();
+                I.state = 'exploding';
+            }
+            if(I.state === 'flying'){
+                I.y += I.yVelocity;
+                I.x += I.xVelocity;
+                I.active = I.active && I.inBounds();
+            } else {
+                I.explodeRadius += 1;
+                I.active = !I.doneExploding();
+            }
+        };
+
+        return I;
+    }
+
+    function resize(evt){
+        var newWidth = window.innerWidth;
+        var newHeight = window.innerHeight;
+        var canvasObj = document.getElementById('canvasId');
+        canvasObj.width = newWidth - 20;
+        canvasObj.height = newHeight - 20;
+        //Update the constants so other methods don't have to refetch the dom element
+        WIDTH = canvasObj.width;
+        HEIGHT = canvasObj.height;
+    }
+
+    function update() {
+        fireworks.forEach(function(firework) {
+            firework.update();
+        });
+        //Remove any inactive fireworks
+        fireworks = fireworks.filter(function(firework) {
+            return firework.active;
+        });
+
+        if(!TEST){
+            if(Math.random() < 0.1) {
+                fireworks.push(Firework({
+                    speed: Math.ceil(Math.random() * 5),
+                    x: Math.floor(Math.random() * WIDTH ) + (MAX_RADIUS/2),
+                    y: HEIGHT
+                }));
+            }
+        }
+    }
+
+    function draw() {
+        canvas.clearRect(0,0,WIDTH,HEIGHT);
+        fireworks.forEach(function(firework) {
+            firework.draw();
+        });
+    }
+
+    //40 = 1000/25 (25 frames per second)
+    function startEventLoop() {
+        setInterval(function() {
+            update();
+            draw();
+        }, 40);
+    }
+    function init(){
+        var canvasDiv = document.getElementById('canvasId');
+        if(!canvasDiv.getContext){
+            logMsg("Canvas: Not supported");
+            return;
+        }
+        canvas = canvasDiv.getContext('2d');
+
+        resize();
+
+        window.addEventListener('resize', resize, false);
+        window.addEventListener('orientationchange', resize, false);
+
+        //Prevent user dragging here to keep the canvas stationary
+        document.body.addEventListener('touchmove', function(event) {
+                event.preventDefault();
+        }, false);
+
+        if(TEST){
+            fireworks.push(Firework({
+                speed: Math.ceil(Math.random() * 5),
+                x: Math.floor(Math.random() * WIDTH ) + (MAX_RADIUS/2),
+                y: HEIGHT
+            }));
+        }
+
+        startEventLoop();
+        logMsg('Init: Complete');
+    }
+
+    </script>
+  </head>
+  <body onLoad="init()">
+  <div id="canvasArea">
+  <canvas id="canvasId" style="border: 1px solid red"></canvas>
+  </div>
+  </body>
+</html>
