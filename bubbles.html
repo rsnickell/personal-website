@@ -88,7 +88,8 @@ body {
     }
 
     function touchMoveHandler(evt) {
-        //var msg = 'Touch move: ';
+        /*
+        var msg = 'Touch move: ';
         for(var i = 0; i < evt.touches.length; i++) {
             var touch = evt.touches[i];
             //msg += touch.identifier + '(x,y) = ('+touch.clientX+','+touch.clientY+')';
@@ -96,7 +97,8 @@ body {
                 msg += ', ';
             }
         }
-        //logMsg(msg);
+        logMsg(msg);
+        */
     }
     function touchStartHandler(evt) {
         //var msg = 'Touch start: ';
@@ -110,6 +112,13 @@ body {
 
         }
         //logMsg(msg);
+    }
+
+    function mousedownHandler(evt) {
+        actionObjs.push(Action({
+                        x: evt.offsetX,
+                        y: evt.offsetY
+        }));
     }
 
     function clickHandler(evt){
@@ -168,7 +177,8 @@ body {
             canvas = canvasElement.getContext('2d');
         }
         canvasElement.addEventListener('touchstart', touchStartHandler, false);
-        canvasElement.addEventListener('touchmove', touchMoveHandler, false);
+        //canvasElement.addEventListener('touchmove', touchMoveHandler, false);
+        canvasElement.addEventListener('mousedown', mousedownHandler, false);
 
         resize();
 
